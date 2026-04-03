@@ -37,6 +37,9 @@ public class AuthService {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private EmailNotificationService emailNotificationService;
+
     public void createUser(CreateUserRequest createUserRequest) {
         log.info("Creating user {}", createUserRequest.getEmail());
 
@@ -49,6 +52,7 @@ public class AuthService {
             }
             String hashedPassword = passwordService.hashPassword(createUserRequest.getPassword());
             userPersistApi.storeUser(createUserRequest.getEmail(), hashedPassword);
+            emailNotificationService.sendWelcomeEmail(createUserRequest.getEmail());
         } catch (SQLException e) {
             throw new RuntimeException("Database error during user creation", e);
         }
