@@ -31,7 +31,7 @@ public class EmailNotificationService {
         HttpEntity<Map<String, String>> request = new HttpEntity<>(payload, headers);
 
         try {
-            restTemplate.postForEntity(emailServiceUrl + "/api/email/send", request, Void.class);
+            restTemplate.postForEntity(emailServiceUrl + "/email/send", request, Void.class);
             log.info("Welcome email sent to: {}", userEmail);
         } catch (Exception e) {
             log.error("Failed to send welcome email to: {}", userEmail, e);
