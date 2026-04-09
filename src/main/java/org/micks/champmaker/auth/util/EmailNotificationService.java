@@ -37,4 +37,24 @@ public class EmailNotificationService {
             log.error("Failed to send welcome email to: {}", userEmail, e);
         }
     }
+
+    public void sendPasswordResetEmail(String userEmail, String resetLink) {
+        Map<String, String> payload = Map.of(
+                "toEmail",   userEmail,
+                "toName",    userEmail,
+                "eventType", "PASSWORD_RESET",
+                "resetLink", resetLink
+        );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Map<String, String>> request = new HttpEntity<>(payload, headers);
+
+        try {
+            restTemplate.postForEntity(emailServiceUrl + "/email/send", request, Void.class);
+            log.info("Password reset email sent to: {}", userEmail);
+        } catch (Exception e) {
+            log.error("Failed to send password reset email to: {}", userEmail, e);
+        }
+    }
 }
