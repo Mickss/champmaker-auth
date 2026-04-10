@@ -8,6 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -39,16 +41,16 @@ public class EmailNotificationService {
     }
 
     public void sendPasswordResetEmail(String userEmail, String resetLink) {
-        Map<String, String> payload = Map.of(
-                "toEmail",   userEmail,
-                "toName",    userEmail,
-                "eventType", "PASSWORD_RESET",
-                "resetLink", resetLink
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("toEmail", userEmail);
+        payload.put("toName", userEmail);
+        payload.put("eventType", "PASSWORD_RESET");
+        payload.put("templateParams", List.of(resetLink)
         );
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Map<String, String>> request = new HttpEntity<>(payload, headers);
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
 
         try {
             restTemplate.postForEntity(emailServiceUrl + "/email/send", request, Void.class);
