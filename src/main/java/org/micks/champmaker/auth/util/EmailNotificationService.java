@@ -8,6 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -35,6 +37,26 @@ public class EmailNotificationService {
             log.info("Welcome email sent to: {}", userEmail);
         } catch (Exception e) {
             log.error("Failed to send welcome email to: {}", userEmail, e);
+        }
+    }
+
+    public void sendPasswordResetEmail(String userEmail, String resetLink) {
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("toEmail", userEmail);
+        payload.put("toName", userEmail);
+        payload.put("eventType", "PASSWORD_RESET");
+        payload.put("templateParams", List.of(resetLink)
+        );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
+
+        try {
+            restTemplate.postForEntity(emailServiceUrl + "/email/send", request, Void.class);
+            log.info("Password reset email sent to: {}", userEmail);
+        } catch (Exception e) {
+            log.error("Failed to send password reset email to: {}", userEmail, e);
         }
     }
 }
